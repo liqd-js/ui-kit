@@ -1,0 +1,179 @@
+<style>
+    .RangeSlider
+    {
+        position:relative;
+        width: 100%;
+        height: var( --form-range-slider-handler-height, 48px );
+        user-select: none;
+        overflow: visible;
+
+        &:before, &:after
+        {
+            content: "";
+            position: absolute;
+            bottom: 22px;
+            height: var( --form-range-slider-bar-height, 6px);
+            background: var( --form-range-slider-disabled-background, var(--form-disabled-background, rgba(0,0,0,0.03) ));
+            border: var( --form-range-slider-border-width, var(--form-border-width, 1px )) solid  var( --form-range-slider-border-color, var(--form-border-color, #dfe3e9 ));
+        }
+
+        &:before
+        {
+            left: 0; right: 0;
+        }
+
+        &:after
+        {
+            left: var( --rangeslider-selection-left ); right: var( --rangeslider-selection-right );
+            background: var( --form-range-slider-focus-border-color, var(--form-focus-border-color, #2ea2f8 ));
+            border-left: none; border-right: none;
+        }
+
+        >.handle
+        {
+            position: absolute; bottom: 13px; cursor: pointer;
+            height: var( --form-range-slider-handler-height, 24px );
+            width: var( --form-range-slider-handler-height, 24px);
+            background: var( --form-range-slider-background, var(--form-background, #ffffff ));
+            border: var( --form-range-slider-border-width, var(--form-border-width, 1px )) solid  var( --form-range-slider-border-color, var(--form-border-color, #dfe3e9 ));
+            border-radius: var( --form-range-slider-border-radius, var(--form-border-radius, 2px ));
+
+            &:before
+            {
+                content: attr(data-value);
+                position: absolute;
+                pointer-events: none;
+                bottom: -20px;
+                text-align: center;
+                color: var( --form-range-slider-label-color, var(--form-label-color, #7f8fa4 ));
+                font-size: var( --form-range-slider-label-fill-size, var(--form-fill-label-size, 12px ));
+                font-weight: bold;
+                display: none;
+            }
+        }
+    }
+    .RangeSliderValues
+    {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        font-size: 14rem;
+        line-height: 18rem;
+        font-weight: 500;
+        margin-top: -8px;
+        .separator
+        {
+            padding: 0 var(--padding-1);
+            color: var(--gray-7);
+        }
+        > div:not(.separator)
+        {
+            &:before
+             {
+                 content: attr(data-before);
+             }
+            &:after
+             {
+                 content: attr(data-after);
+             }
+        }
+    }
+</style>
+<script>
+    ( typeof RangeSlider === 'undefined' ) && ( RangeSlider =
+    {
+        getHandleData: function( handle, event )
+        {
+            let slider = handle.parentNode, type = ( !handle.previousSibling || !handle.previousSibling.classList.contains('handle')) ? (( !handle.nextSibling || !handle.nextSibling.classList.contains('handle')) ? 'center' : 'left' ) : 'right';
+            let clientX = event ? ( event.clientX ? event.clientX : event.touches[0].clientX ) : undefined;
+
+            return(
+            {
+                slider, handle, type, startX: parseFloat( handle.style.left ), clientX,
+                minX: type !== 'right' ? 0 : parseFloat( handle.previousSibling.style.left ) + handle.offsetWidth,
+                maxX: type !== 'left' ? slider.offsetWidth - handle.offsetWidth : parseFloat( handle.nextSibling.style.left ) - handle.offsetWidth,
+                minV: type !== 'right' ? parseFloat( slider.getAttribute('data-min')) : parseFloat( slider.getAttribute('data-from')),
+                maxV: type !== 'left' ? parseFloat( slider.getAttribute('data-max')) : parseFloat( slider.getAttribute('data-to'))
+            });
+        },
+
+        getHandlePositionForValue: function( handle_data, value )
+        {
+            if( isNaN( handle_data.maxX ))
+            {
+                handle_data.maxX = ( handle_data.slider.offsetWidth - 2 * handle_data.handle.offsetWidth ) * ( parseFloat( handle_data.slider.getAttribute('data-to')) - parseFloat( handle_data.slider.getAttribute('data-min'))) / ( parseFloat( handle_data.slider.getAttribute('data-max')) - parseFloat( handle_data.slider.getAttribute('data-min')));
+            }
+
+            return handle_data.minX + ( handle_data.maxX - handle_data.minX ) * ( value - handle_data.minV ) / ( handle_data.maxV - handle_data.minV );
+        },
+
+        getValueForHandlePosition: function( handle_data )
+        {
+            return ( handle_data.maxX === handle_data.minX ) ? handle_data.minV : Math.round( handle_data.minV + ( handle_data.maxV - handle_data.minV ) * ( parseFloat( handle_data.handle.style.left ) - handle_data.minX ) / ( handle_data.maxX - handle_data.minX ));
+        },
+
+        init: function( slider )
+        {
+            for( let handle of slider.childNodes )
+            {
+                let handle_data = RangeSlider.getHandleData( handle, event ), x = RangeSlider.getHandlePositionForValue( handle_data, parseFloat( handle.getAttribute('data-value')));
+
+                handle.style.left = x + 'px';
+                slider.style.setProperty('--rangeslider-selection-' + handle_data.type, ( handle_data.type === 'left' ? x + handle.offsetWidth : slider.offsetWidth - x ) + 'px' );
+            }
+        },
+
+        drag: function( handle, event )
+        {
+            event.preventDefault(); event.stopPropagation();
+
+            handle.RangeSlider = RangeSlider.getHandleData( handle, event );
+            handle.RangeSlider.drag = window.RangeSlider.onDrag.bind( null, handle );
+            handle.RangeSlider.stop = window.RangeSlider.onDragStop.bind( null, handle );
+
+
+            document.body.addEventListener( event.type === 'touchstart' ? 'touchmove' : 'mousemove', handle.RangeSlider.drag, true );
+            document.body.addEventListener( event.type === 'touchstart' ? 'touchend' : 'mouseup', handle.RangeSlider.stop, true );
+        },
+
+        onDrag: function( handle, event )
+        {
+            if( handle.RangeSlider )
+            {
+                let r = handle.RangeSlider, x, v, clientX = event.clientX ? event.clientX : event.touches[0].clientX;
+
+                handle.style.left = ( x = Math.max( Math.min( r.startX + clientX - r.clientX, r.maxX ), r.minX )) + 'px';
+                handle.setAttribute('data-value', v = RangeSlider.getValueForHandlePosition( r, x ));
+                handle.RangeSlider.slider.setAttribute('data-' + ( r.type === 'left' ? 'from' : ( r.type === 'right' ? 'to' : 'value' )), v );
+                handle.RangeSlider.slider.style.setProperty('--rangeslider-selection-' + r.type, ( r.type === 'left' ? x + handle.offsetWidth : r.slider.offsetWidth - x ) + 'px' );
+
+                handle.parentNode.nextSibling.querySelector('div[data-side="'+handle.dataset.side+'"]').innerHTML = handle.dataset.value;
+            }
+        },
+
+        onDragStop: function( handle, event )
+        {
+            if( handle.RangeSlider )
+            {
+                document.body.removeEventListener( event.type === 'touchend' ? 'touchmove' : 'mousemove', handle.RangeSlider.drag, true );
+                document.body.removeEventListener( event.type === 'touchend' ? 'touchend' : 'mouseup', handle.RangeSlider.stop, true );
+
+                if( handle.RangeSlider.slider.onchange ) { handle.RangeSlider.slider.onchange() }
+                delete handle.RangeSlider;
+            }
+        }
+    })
+</script>
+<div class="RangeSlider" onchange={( typeof onchange != "undefined" ? onchange : null)} data-name={name} data-from={(from != 'false' ? from : min)} data-to={(to != 'false' ? to : max)} data-min={min} data-max={max} data-min-range={range}>
+    <div class="handle" data-side="from" onmousedown="window.RangeSlider.drag( this, event );" ontouchstart="window.RangeSlider.drag( this, event );" data-value={from}></div>
+    <div class="handle" data-side="to" onmousedown="window.RangeSlider.drag( this, event );" ontouchstart="window.RangeSlider.drag( this, event );" data-value={to}></div>
+</div>
+<div class="RangeSliderValues">
+    <div data-side="from" data-before={(typeof before !== "undefined" ? before : null)} data-after={(typeof after !== "undefined" ? after : null)}>{from}</div>
+    <div class="separator">-</div>
+    <div data-side="to" data-before={(typeof before !== "undefined" ? before : null)} data-after={(typeof after !== "undefined" ? after : null)}>{to}</div>
+</div>
+<script name={name} instance>
+    RangeSlider.init( document.querySelector('[data-name="'+name+'"]'));
+</script>

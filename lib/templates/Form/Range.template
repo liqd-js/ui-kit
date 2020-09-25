@@ -1,0 +1,93 @@
+<style>
+    div.Range
+    {
+        position:relative;
+        width: 100%;
+        height: var( --form-range-handler-height, 48px );
+        user-select: none;
+        overflow: visible;
+
+        &:before, &:after
+        {
+            content: "";
+            position: absolute;
+            bottom: 22px;
+            height: var( --form-range-bar-height, 6px);
+            background: var( --form-range-disabled-background, var(--form-disabled-background, rgba(0,0,0,0.03) ));
+            border: var( --form-range-border-width, var(--form-border-width, 1px )) solid  var( --form-range-border-color, var(--form-border-color, #dfe3e9 ));
+        }
+
+        &:before
+        {
+            left: 0; right: 0;
+        }
+
+        &:after
+        {
+            left: var( --rangeslider-selection-left ); right: var( --rangeslider-selection-right );
+            background: var( --form-range-focus-border-color, var(--form-focus-border-color, #2ea2f8 ));
+            border-left: none; border-right: none;
+        }
+
+        >.handle
+        {
+            position: absolute; bottom: 13px; cursor: pointer;
+            height: var( --form-range-handler-height, 24px );
+            width: var( --form-range-handler-height, 8px);
+            background: var( --form-range-background, var(--form-background, #ffffff ));
+            border: var( --form-range-border-width, var(--form-border-width, 1px )) solid  var( --form-range-border-color, var(--form-border-color, #dfe3e9 ));
+            border-radius: var( --form-range-border-radius, var(--form-border-radius, 2px ));
+
+            &:before
+            {
+                content: attr(data-value);
+                position: absolute;
+                pointer-events: none;
+                bottom: -20px;
+                text-align: center;
+                color: var( --form-range-label-color, var(--form-label-color, #7f8fa4 ));
+                font-size: var( --form-range-label-fill-size, var(--form-fill-label-size, 12px ));
+                font-weight: bold;
+                display: none;
+            }
+        }
+    }
+</style>
+<script>
+    function RangeDrag( handle, event )
+    {
+        let min = parseFloat( handle.parentNode.dataset.min ), max = parseFloat( handle.parentNode.dataset.max );
+
+        let eventX = event.screenX, startX = handle.offsetLeft;
+        let minX = handle.previousElementSibling && handle.previousElementSibling.classList.contains( 'handle' ) ? handle.previousElementSibling.offsetLeft + handle.previousElementSibling.offsetWidth : 0;
+        let maxX = handle.nextElementSibling && handle.nextElementSibling.classList.contains( 'handle' ) ? handle.nextElementSibling.offsetLeft - handle.offsetWidth : handle.parentNode.offsetWidth - handle.offsetWidth;
+
+        function move( event )
+        {
+            handle.style.left = Math.min( maxX, Math.max( minX, ( startX + ( event.screenX - eventX )))) + 'px';
+        }
+
+        function stop( event )
+        {
+            document.removeEventListener( event.type === 'touchstart' ? 'touchmove' : 'mousemove', move, true );
+            document.removeEventListener( event.type === 'touchstart' ? 'touchend' : 'mouseup', stop, true );
+        }
+
+        document.addEventListener( event.type === 'touchstart' ? 'touchmove' : 'mousemove', move, true );
+        document.addEventListener( event.type === 'touchstart' ? 'touchend' : 'mouseup', stop, true );
+
+        event.preventDefault();
+        event.stopPropagation();
+    }
+</script>
+{
+    let min = parseFloat( $props.min ), max = parseFloat( $props.max );
+    let from = parseFloat( $props.from !== undefined ? $props.from : $props.min ), to = parseFloat( $props.to !== undefined ? $props.to : $props.max );
+    let fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - 10px ))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - 10px ))';
+
+    <div class="Range" data-min={ $props.min } data-max={ $props.max }>
+        <input type="hidden" name={ $props.name } value={ from + ':' + to }/>
+        <div class="handle" style={ 'left:' + fromX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );"></div>
+        <div class="handle" style={ 'left:' + toX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );"></div>
+    </div>
+}

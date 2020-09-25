@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div style="margin: 32px; width: 384px">
+            <Input name="name" label="Name"/>
+            <Input name="password" type="password" label="Password"/>
+            <Select name="age" label="Age">
+                <option value="0-13">0-13</option>
+                <option value="14-18" selected>14-18</option>
+                <option value="19-29">19-29</option>
+                <option value="30-59">30-59</option>
+                <option value="60+">60+</option>
+            </Select>
+            <Textarea name="note" label="Note"></Textarea>
+            <Toggle name="agree"><span>Terms and conditions</span></Toggle>
+            <Radio name="social" label="Facebook"/>
+            <Radio name="social">Google</Radio>
+            <Radio name="social2" label="Instagram"/>
+            <Radio name="social2">TikTok</Radio>
+            <Checkbox name="newsletter">Google</Checkbox>
+            <Range min="10" max={1000} from="50"/>
+        </div>
+    </body>
+</html>
