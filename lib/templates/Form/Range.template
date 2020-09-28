@@ -56,21 +56,42 @@
 <script>
     function RangeDrag( handle, event )
     {
-        let min = parseFloat( handle.parentNode.dataset.min ), max = parseFloat( handle.parentNode.dataset.max );
+        let range = handle.parentNode, eventX = event.screenX, startX = handle.offsetLeft;
+        let handles = [...range.querySelectorAll('.handle')], input = range.querySelector('input');
+        let value = handles.map( h => parseFloat( h.dataset.value )), index = handles.findIndex( h => h === handle );
+        let prev = index > 0 ? handles[ index - 1 ] : null;
+        let next = index < handles.length - 1 ? handles[ index + 1 ] : null;
 
-        let eventX = event.screenX, startX = handle.offsetLeft;
-        let minX = handle.previousElementSibling && handle.previousElementSibling.classList.contains( 'handle' ) ? handle.previousElementSibling.offsetLeft + handle.previousElementSibling.offsetWidth : 0;
-        let maxX = handle.nextElementSibling && handle.nextElementSibling.classList.contains( 'handle' ) ? handle.nextElementSibling.offsetLeft - handle.offsetWidth : handle.parentNode.offsetWidth - handle.offsetWidth;
+        let min = parseFloat( prev ? prev.dataset.value : range.dataset.min );
+        let max = parseFloat( next ? next.dataset.value : range.dataset.max );
+        let minX = prev ? prev.offsetLeft + prev.offsetWidth : 0;
+        let maxX = ( next ? next.offsetLeft : range.offsetWidth ) - handle.offsetWidth;
+
+        function fireEvent( event )
+        {
+            let evt = document.createEvent( 'HTMLEvents' );
+            evt.initEvent( event, false, true );
+            input.dispatchEvent( evt );
+        }
 
         function move( event )
         {
-            handle.style.left = Math.min( maxX, Math.max( minX, ( startX + ( event.screenX - eventX )))) + 'px';
+            let x = Math.min( maxX, Math.max( minX, ( startX + ( event.screenX - eventX )))); // TODO sticky
+
+            handle.style.left = x + 'px';
+            handle.dataset.value = value[ index ] =  Math.round( min + ( x - minX ) / ( maxX - minX ) * ( max - min )); //TODO decimal / float
+
+            input.value = value.join(':');
+            
+            fireEvent( 'input' );
         }
 
         function stop( event )
         {
             document.removeEventListener( event.type === 'touchstart' ? 'touchmove' : 'mousemove', move, true );
             document.removeEventListener( event.type === 'touchstart' ? 'touchend' : 'mouseup', stop, true );
+
+            fireEvent( 'change' );
         }
 
         document.addEventListener( event.type === 'touchstart' ? 'touchmove' : 'mousemove', move, true );
@@ -86,8 +107,8 @@
     let fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - 10px ))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - 10px ))';
 
     <div class="Range" data-min={ $props.min } data-max={ $props.max }>
-        <input type="hidden" name={ $props.name } value={ from + ':' + to }/>
-        <div class="handle" style={ 'left:' + fromX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );"></div>
-        <div class="handle" style={ 'left:' + toX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );"></div>
+        <input type="hidden" {[ name, on* ]...$props } value={ from + ':' + to }/>
+        <div class="handle" style={ 'left:' + fromX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );" data-value={ from }></div>
+        <div class="handle" style={ 'left:' + toX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );" data-value={ to }></div>
     </div>
 }

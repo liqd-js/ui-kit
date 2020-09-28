@@ -30,7 +30,7 @@
             height: var( --form-toggle-size, var( --form-size, 24px ));
             width: calc( 1.6 * var( --form-toggle-size, var( --form-size, 24px )));
             margin-right: 8px;
-            border: 1px solid var( --form-toggle-border-color, var( --form-border-color, #999 ));
+            border: 1px solid var( --form-toggle-border-color, var( --form-border-color, #a8a8a8 ));
             border-radius: var( --form-toggle-size, var( --form-size, 24px ));
             background: var( --form-toggle-background, var( --form-background, #ccc ));
             -webkit-appearance: none;

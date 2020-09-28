@@ -1,0 +1,59 @@
+<style>
+    div.Calendar
+    {
+        position:relative;
+        width: 300px;
+
+        >.week
+        {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: right;
+
+            >.prev, >.next
+            {
+                opacity: 0.25;
+            }
+        }
+    }
+</style>
+<div class="Calendar">
+{
+    function Days( date, offset = 0 ){ return new Date( date.getYear(), date.getMonth() + offset + 1, 0 ).getDate() }
+
+    const DAYS = [ 'Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne' ];
+    let date = new Date(); date.setDate(1);
+    let days = Days( date ), last_days = Days( date, -1 ), next_days = Days( date, 1 );
+    let dow = ( date.getDay() + 6 ) % 7;
+    
+    console.log( date, days, last_days, next_days, dow );
+
+    <div class="week">
+    for( let name of DAYS )
+    {
+        <div>{ name }</div>
+    }
+    </div>
+
+    for( let week = 0, day = - dow + 1; week < 6; ++week )
+    {
+        <div class="week">
+            for( let i = 0; i < 7; ++i && ++day )
+            {
+                if( day < 1 )
+                {
+                    <div class="prev">{ last_days + day }</div>
+                }
+                else if( day <= days )
+                {
+                    <div>{ day }</div>
+                }
+                else
+                {
+                    <div class="next">{ day - days }</div>
+                }
+            }
+        </div>
+    }
+}
+</div>

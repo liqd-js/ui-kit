@@ -20,7 +20,8 @@
             <Radio name="social2" label="Instagram"/>
             <Radio name="social2">TikTok</Radio>
             <Checkbox name="newsletter">Google</Checkbox>
-            <Range min="10" max={1000} from="50"/>
+            <Range min="10" max={1000} from="50" onchange="alert( event.target.value )"/>
+            <Calendar/>
         </div>
     </body>
 </html>
