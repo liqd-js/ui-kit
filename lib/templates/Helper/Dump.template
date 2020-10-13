@@ -1,0 +1,69 @@
+<style>
+    pre.Dump
+    {
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 12px;
+        font-weight: bold;
+        line-height: 16px;
+        background: white;
+        overflow-y: scroll;
+
+        .key
+        {
+            color: red;
+        }
+
+        .string
+        {
+            color: red;
+        }
+
+        .number
+        {
+            color: orange;
+        }
+    }
+</style>
+<pre class="Dump">
+{
+    const Q = JSON.stringify;
+
+    function dump( data, prefix = '' )
+    {
+        let render = '';
+
+        if( typeof data === 'string' || typeof data === 'number' )
+        {
+            render += `<span class="${ typeof data }">${Q(data)}</span>`;
+        }
+        else if( Array.isArray( data ))
+        {
+            render += `\n${prefix}[\n`;
+
+            for( let key in data )
+            {
+                render += `${prefix + '  '}` + dump( data[key], prefix + '  ' ) + ',\n';
+            }
+
+            render += `${prefix}]\n`;
+        }
+        else if( typeof data === 'object' )
+        {
+            render += `\n${prefix}{\n`;
+
+            for( let key in data )
+            {
+                render += `${prefix + '  '}<span class="key">${Q(key)}</span> : ` + dump( data[key], prefix + '  ' ) + ',\n';
+            }
+
+            render += `${prefix}}\n`;
+        }
+
+        return render;
+    }
+
+    <>
+        #{ dump($props.data) }
+    </>
+}
+</pre>
