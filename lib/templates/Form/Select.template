@@ -60,7 +60,7 @@
     $props.class = ( 'Select ' + ( $props.class || '' )).trim();
 }
 <label {[ id, class, style ]...$props } data-label={ $props.label }>
-    <select {[ name, placeholder, on* ]...$props }>
+    <select {[ name, placeholder, on*, data-* ]...$props }>
         {$content}
     </select>
 </label>
