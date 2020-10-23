@@ -9,12 +9,12 @@ const template = new Template({ directories: [ UIKit.path, __dirname + '/templat
 
 server.get( '/form', async( req, res ) =>
 {
-    res.reply( await template.render( '', 'Form' ), 'text/html' );
+    res.reply( await template.render( 'Form', {}), 'text/html' );
 });
 
 server.get( async( req, res ) =>
 {
-    res.reply( await template.render( '', 'Index' ), 'text/html' );
+    res.reply( await template.render( 'Index', {}), 'text/html' );
 });
 
 server.listen( 8080 );

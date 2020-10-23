@@ -23,5 +23,6 @@
             <Range min="10" max={1000} from="50" onchange="alert( event.target.value )"/>
             <Calendar/>
         </div>
+        <Dump data={{ foo: 'bar', bar: { foo: [ 1, '2', 3 ] }}}/>
     </body>
 </html>
