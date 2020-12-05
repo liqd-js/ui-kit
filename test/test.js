@@ -4,8 +4,6 @@ const Server = require('@liqd-js/server');
 const Template = require('@liqd-js/template');
 const UIKit = require('../lib/ui_kit');
 
-console.log( UIKit.path, __dirname + '/templates' );
-
 const server = new Server();
 const template = new Template({ directories: [ UIKit.path, __dirname + '/templates' ]});
 
@@ -21,4 +19,4 @@ server.get( async( req, res ) =>
     res.reply( await template.render( 'Index', {}), 'text/html' );
 });
 
-server.listen( 8080 );
+server.listen( 8081 );
