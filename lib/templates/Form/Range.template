@@ -100,6 +100,20 @@
         event.preventDefault();
         event.stopPropagation();
     }
+
+    function Range_update( range, options )
+    {
+        var value = range.querySelector('input').value.split(':').map( v => v ? parseFloat( v ) : undefined );
+        let handles = range.querySelectorAll('.handle');
+        var min = parseFloat( options.hasOwnProperty('min') ? options.min : range.dataset.min ), max = parseFloat( options.hasOwnProperty('max') ? options.max : range.dataset.max );
+        var from = Math.min( max, Math.max( min, parseFloat( options.hasOwnProperty('min') ? options.min : ( value[0] !== undefined ? value[0] : -Infinity ))));
+        var to = Math.max( min, Math.min( max, parseFloat( options.hasOwnProperty('max') ? options.max : ( value[1] !== undefined ? value[1] : Infinity ))));
+        var fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - 10px ))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - 10px ))';
+
+        range.querySelector('input').value = from + ':' + to;
+        handles[0].style.left = fromX;
+        handles[1].style.left = toX;
+    }
 </script>
 {
     let min = parseFloat( $props.min ), max = parseFloat( $props.max );

@@ -202,7 +202,7 @@
 //style={( typeof width !== 'undefined' ? 'width:' + width + ';' : '' )+( typeof height !== 'undefined' ? 'height:' + height + ';' : '' )}
 <div class="Scroll" onmouseenter="Scroll.enter(this.firstElementChild, event)" onmouseleave="Scroll.leave(this.firstElementChild, event)">
     //style={( typeof overflowLeft !== 'undefined' ? 'margin-left:'+overflowLeft.replace(/^\s*calc\((.*)\)\s*$/,'calc(-1 * ($1))')+';padding-left:'+overflowLeft : '' )}
-    <div class="ScrollContent" onscroll="Scroll.onScroll(this)">
+    <div class="ScrollContent" id={ $props['content-id'] } onscroll="Scroll.onScroll(this)">
         {$content}
     </div>
     <div class="ScrollHandle">
