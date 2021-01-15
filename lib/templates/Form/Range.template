@@ -3,60 +3,51 @@
     {
         position:relative;
         width: 100%;
-        height: var( --form-range-handler-height, 48px );
+        height: var( --form-range-handle-height, var( --form-range-handle-size, 20px ));
         user-select: none;
         overflow: visible;
 
         &:before, &:after
         {
+            z-index: -2;
+            left: 0; right: 0;
             content: "";
             position: absolute;
-            bottom: 22px;
-            height: var( --form-range-bar-height, 6px);
-            background: var( --form-range-disabled-background, var(--form-disabled-background, rgba(0,0,0,0.03) ));
-            border: var( --form-range-border-width, var(--form-border-width, 1px )) solid  var( --form-range-border-color, var(--form-border-color, #dfe3e9 ));
-        }
-
-        &:before
-        {
-            left: 0; right: 0;
+            top: calc(( var( --form-range-handle-height, var( --form-range-handle-size, 20px )) - var( --form-range-height, 6px )) / 2);
+            height: var( --form-range-height, 6px );
+            background: var( --form-range-bar-background, #e6e6e6 );
+            border: var( --form-range-border-width, 0px ) solid  var( --form-range-border-color, var( --form-border-color, #999 ));
+            border-radius: var( --form-range-border-radius, 2px );
+            box-sizing: border-box;
         }
 
         &:after
         {
-            left: var( --rangeslider-selection-left ); right: var( --rangeslider-selection-right );
-            background: var( --form-range-focus-border-color, var(--form-focus-border-color, #2ea2f8 ));
+            z-index: -1;
+            left: var( --range-selection-left );
+            right: var( --range-selection-right, 50px );
+            background: var( --form-range-background, var( --form-highlight-background, #1e87f0 ));
+            transform: translateX( calc( var( --form-range-handle-width, var( --form-range-handle-size, 20px )) / 2 ));
             border-left: none; border-right: none;
+            border-radius: 0;
         }
 
         >.handle
         {
-            position: absolute; bottom: 13px; cursor: pointer;
-            height: var( --form-range-handler-height, 24px );
-            width: var( --form-range-handler-height, 8px);
-            background: var( --form-range-background, var(--form-background, #ffffff ));
-            border: var( --form-range-border-width, var(--form-border-width, 1px )) solid  var( --form-range-border-color, var(--form-border-color, #dfe3e9 ));
-            border-radius: var( --form-range-border-radius, var(--form-border-radius, 2px ));
-
-            &:before
-            {
-                content: attr(data-value);
-                position: absolute;
-                pointer-events: none;
-                bottom: -20px;
-                text-align: center;
-                color: var( --form-range-label-color, var(--form-label-color, #7f8fa4 ));
-                font-size: var( --form-range-label-fill-size, var(--form-fill-label-size, 12px ));
-                font-weight: bold;
-                display: none;
-            }
+            position: absolute; top: 0px; cursor: pointer;
+            height: var( --form-range-handle-height, var( --form-range-handle-size, 20px ));
+            width: var( --form-range-handle-width, var( --form-range-handle-size, 20px ));
+            background: var( --form-range-handle-background, #ffffff );
+            border: var( --form-range-handle-border-width, 1px ) solid  var( --form-range-handle-border-color, #999 );
+            border-radius: var( --form-range-handle-border-radius, 50% );
+            box-sizing: border-box;
         }
     }
 </style>
 <script>
     function RangeDrag( handle, event )
     {
-        let range = handle.parentNode, eventX = event.screenX, startX = handle.offsetLeft;
+        let range = handle.parentNode, touch = ( event.type === 'touchstart' ), eventX = ( touch ? event.touches[0].screenX : event.screenX ), startX = handle.offsetLeft;
         let handles = [...range.querySelectorAll('.handle')], input = range.querySelector('input');
         let value = handles.map( h => parseFloat( h.dataset.value )), index = handles.findIndex( h => h === handle );
         let prev = index > 0 ? handles[ index - 1 ] : null;
@@ -76,26 +67,30 @@
 
         function move( event )
         {
-            let x = Math.min( maxX, Math.max( minX, ( startX + ( event.screenX - eventX )))); // TODO sticky
+            let x = Math.min( maxX, Math.max( minX, ( startX + (( touch ? event.touches[0].screenX : event.screenX ) - eventX )))); // TODO sticky na cele cisla
 
             handle.style.left = x + 'px';
             handle.dataset.value = value[ index ] =  Math.round( min + ( x - minX ) / ( maxX - minX ) * ( max - min )); //TODO decimal / float
 
+            range.style.setProperty( '--range-selection-' + ( index ? 'right' : 'left' ), index ? 'calc( 100% - ' + x + 'px)' : x + 'px' ); // TODO spravit to zavisle na sirke cez % a cals
+
             input.value = value.join(':');
+
+            // TODO emitnut input len ked sa zmeni
             
             fireEvent( 'input' );
         }
 
         function stop( event )
         {
-            document.removeEventListener( event.type === 'touchstart' ? 'touchmove' : 'mousemove', move, true );
-            document.removeEventListener( event.type === 'touchstart' ? 'touchend' : 'mouseup', stop, true );
+            document.removeEventListener( touch ? 'touchmove' : 'mousemove', move, true );
+            document.removeEventListener( touch ? 'touchend' : 'mouseup', stop, true );
 
             fireEvent( 'change' );
         }
 
-        document.addEventListener( event.type === 'touchstart' ? 'touchmove' : 'mousemove', move, true );
-        document.addEventListener( event.type === 'touchstart' ? 'touchend' : 'mouseup', stop, true );
+        document.addEventListener( touch ? 'touchmove' : 'mousemove', move, true );
+        document.addEventListener( touch ? 'touchend' : 'mouseup', stop, true );
 
         event.preventDefault();
         event.stopPropagation();
@@ -108,13 +103,16 @@
         var min = parseFloat( options.hasOwnProperty('min') ? options.min : range.dataset.min ), max = parseFloat( options.hasOwnProperty('max') ? options.max : range.dataset.max );
         var from = Math.min( max, Math.max( min, parseFloat( options.hasOwnProperty('from') ? options.from : ( value[0] !== undefined ? value[0] : -Infinity ))));
         var to = Math.max( min, Math.min( max, parseFloat( options.hasOwnProperty('to') ? options.to : ( value[1] !== undefined ? value[1] : Infinity ))));
-        var fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - 10px ))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - 10px ))';
+        //var fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - 10px ))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - 10px ))';
+        var fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - var( --form-range-handle-width, var( --form-range-handle-size, 20px ))))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - var( --form-range-handle-width, var( --form-range-handle-size, 20px ))))';
 
         range.setAttribute( 'data-min', min );
         range.setAttribute( 'data-max', max );
         handles[0].setAttribute( 'data-value', from );
         handles[1].setAttribute( 'data-value', to );
         range.querySelector('input').value = from + ':' + to;
+        range.style.setProperty('--range-selection-left', fromX );
+        range.style.setProperty('--range-selection-right', 'calc( 100% - ' + toX + ' )' );
         handles[0].style.left = fromX;
         handles[1].style.left = toX;
     }
@@ -122,9 +120,9 @@
 {
     let min = parseFloat( $props.min ), max = parseFloat( $props.max );
     let from = parseFloat( $props.from !== undefined ? $props.from : $props.min ), to = parseFloat( $props.to !== undefined ? $props.to : $props.max );
-    let fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - 10px ))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - 10px ))';
+    let fromX = 'calc( ' + (( from - min ) / ( max - min )) +  ' * ( 100% - var( --form-range-handle-width, var( --form-range-handle-size, 20px ))))', toX = 'calc( ' + (( to - min ) / ( max - min )) +  ' * ( 100% - var( --form-range-handle-width, var( --form-range-handle-size, 20px ))))';
 
-    <div class="Range" data-min={ $props.min } data-max={ $props.max }>
+    <div class="Range" data-min={ $props.min } data-max={ $props.max } style={ '--range-selection-left: ' + fromX + '; --range-selection-right: calc( 100% - ' + toX + ' )' }>
         <input type="hidden" {[ name, on* ]...$props } value={ from + ':' + to }/>
         <div class="handle" style={ 'left:' + fromX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );" data-value={ from }></div>
         <div class="handle" style={ 'left:' + toX } onmousedown="RangeDrag( this, event );" ontouchstart="RangeDrag( this, event );" data-value={ to }></div>

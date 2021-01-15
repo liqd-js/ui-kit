@@ -13,7 +13,7 @@
                 <option value="30-59">30-59</option>
                 <option value="60+">60+</option>
             </Select>
-            <Number name="number" min="10" max={1000} step="1" value="1" label="Quantity" />
+            <Number name="number" min="10" max={1000} step="1" value="1" label="Quantity" onchange="console.log(this.value, event)" />
             <Textarea name="note" label="Note"></Textarea>
             <Toggle name="agree"><span>Terms and conditions</span></Toggle>
             <Radio name="social" label="Facebook"/>

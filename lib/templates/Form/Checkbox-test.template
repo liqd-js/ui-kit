@@ -20,7 +20,6 @@
 
         >input
         {
-            cursor: pointer;
             box-sizing: border-box;
             padding: 0;
             margin: 0;
@@ -42,12 +41,15 @@
             &:checked
             {
                 background: var( --form-checkbox-checked-background, var( --form-highlight-background, #1e87f0 ));
-                background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23fff%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
-                background-repeat: no-repeat;
-                background-size: 100%;
-                background-position: center;
-                border: none;
-                //border-color: var( --form-checkbox-checked-border-color, var( --form-checkbox-checked-background, var( --form-highlight-background, #1e87f0 )));
+                mask-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23fff%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
+                mask-repeat: no-repeat;
+                mask-size: 100%;
+                mask-position: center;
+                -webkit-mask-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23fff%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
+                -webkit-mask-repeat: no-repeat;
+                -webkit-mask-size: 100%;
+                -webkit-mask-position: center;
+                border-color: var( --form-checkbox-checked-border-color, var( --form-checkbox-checked-background, var( --form-highlight-background, #1e87f0 )));
             }
         }
 
