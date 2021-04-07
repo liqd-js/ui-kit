@@ -41,6 +41,19 @@
             border: var( --form-range-handle-border-width, 1px ) solid  var( --form-range-handle-border-color, #999 );
             border-radius: var( --form-range-handle-border-radius, 50% );
             box-sizing: border-box;
+
+            &:after
+            {
+                // TODO lepsie poriesit
+
+                position: absolute;
+                content: '';
+                top: -10px;
+                left: -10px;
+                right: -10px;
+                bottom: -10px;
+                background:transparent;
+            }
         }
     }
 </style>

@@ -46,7 +46,7 @@
 
         &:focus-within
         {
-            border-color: var( --form-input-border-color, var( --form-border-color, #1e87f0 ));
+            border-color: var( --form-input-border-color, var( --form-border-color, var( --form-input-border-focus-color, var( --form-border-focus-color, #1e87f0 ))));
 
             &:before
             {
