@@ -34,6 +34,10 @@
             height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
             line-height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
             background: transparent;
+        }
+
+        &[data-value] >input
+        {
             //visibility: hidden;
             opacity: 0;
         }
@@ -48,7 +52,7 @@
             line-height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
             text-align: center;
             font-weight: bold;
-            background: silver;
+            background: #f4f5f5;
             cursor: pointer;
             -moz-user-select: none;
             -webkit-user-select: none;
@@ -57,6 +61,11 @@
             border-width: 0;
             border-color: var( --form-number-border-color, var( --form-border-color, #999 ));
             border-style: solid;
+
+            &:active
+            {
+                background: #e7e8e8;
+            }
 
             &.minus
             {
@@ -71,6 +80,12 @@
             }
         }
 
+        &[data-limit="minimum"] > span.minus, &[data-limit="maximum"] > span.plus
+        {
+            opacity: 0.5;
+            cursor: default;
+        }
+
         &:last-child
         {
             left:100px;
@@ -80,7 +95,7 @@
         {
             border-color: var( --form-input-border-color, var( --form-border-color, var( --form-input-border-focus-color, var( --form-border-focus-color, #1e87f0 ))));
             
-            >input
+            &[data-value]>input
             {
                 opacity: 1;
                 //visibility: visible;
@@ -92,7 +107,7 @@
             }
         }
 
-        &:after
+        &[data-value]:after
         {
             position: absolute;
             text-align: center;
@@ -106,10 +121,6 @@
         }
     }
 </style>
-{
-    $props.class = ( 'Number ' + ( $props.class || '' )).trim();
-    $props.type = $props.type || 'text';
-}
 <script>
     function NumberInputFilter( input )
     {
@@ -144,19 +155,25 @@
         event.stopPropagation();
         event.preventDefault();
 
-        var input = event.target.parentNode.querySelector('input'), value = parseFloat( input.value );
+        var input = event.target.parentNode.querySelector('input'), value = parseFloat( input.value.replace(/,/,'.') );
+        var min = input.dataset.hasOwnProperty('min') ? parseFloat( input.dataset.min ) : -Infinity;
+        var max = input.dataset.hasOwnProperty('max') ? parseFloat( input.dataset.max ) : Infinity;
 
         if( typeof sign !== 'undefined' )
         {
             value = Math.round(( parseFloat( value ) + sign * parseFloat( input.dataset.step )) * 100000 ) / 100000;
         }
 
-        input.value = Math.max( input.dataset.hasOwnProperty('min') ? input.dataset.min : -Infinity, Math.min( input.dataset.hasOwnProperty('max') ? input.dataset.max : Infinity, value ));
+        input.value = value = Math.max( min, Math.min( max, value ));
 
         if( input.parentNode.dataset.pattern )
         {
             input.parentNode.dataset.value = input.parentNode.dataset.pattern.replace(/\{\s*value\s*\}/, input.value );
         }
+
+        if( min === value ){ input.parentNode.dataset.limit = 'minimum' }
+        else if( max === value ){ input.parentNode.dataset.limit = 'maximum' }
+        else{ input.parentNode.removeAttribute( 'data-limit' )}
 
         function fireEvent( event )
         {
@@ -168,8 +185,13 @@
         fireEvent( 'change' );
     }
 </script>
-<label {[ id, class, style ]...$props } data-label={ $props.label } data-value={'{value} ks'.replace(/\{\s*value\s*\}/, $props.value || $props.min || 1 )} data-pattern="{value} ks">
-    <span class="minus" onclick="NumberChange( event, -1 )">-</span>
-    <input {[ type, name, placeholder, !onchange, on*, data-* ]...$props } value={ $props.value || $props.min || 1 } onfocus="NumberInputFilter(this);" onchange={'if( event.isTrusted ){ NumberChange( event )}else{' + ( $props.onclick || '' ) + '}'} data-min={ $props.min } data-step={ $props.step || 1 } data-max={ $props.max } />
-    <span class="plus" onclick="NumberChange( event, 1 )">+</span>
-</label>
+{
+    $props.class = ( 'Number ' + ( $props.class || '' )).trim();
+    let limit = $props.hasOwnProperty('min') && ( $props.min == $props.value || !$props.hasOwnProperty('value')) ? 'minimum' : ( $props.hasOwnProperty('max') && ( $props.max == $props.value ) ? 'maximum' : undefined );
+
+    <label {[ id, class, style ]...$props } data-label={ $props.label } data-value={ $props.pattern ? $props.pattern.replace(/\{\s*value\s*\}/, $props.value || $props.min || 1 ) : undefined } data-pattern={ $props.pattern } data-limit={ limit }>
+        <span class="minus" onclick="NumberChange( event, -1 )">-</span>
+        <input {[ type, name, placeholder, !onchange, on*, data-* ]...$props } value={ $props.value || $props.min || 1 } onfocus="NumberInputFilter(this);" onchange={'if( event.isTrusted ){ NumberChange( event )}else{' + ( $props.onchange || '' ) + '}'} data-min={ $props.min } data-step={ $props.step || 1 } data-max={ $props.max } />
+        <span class="plus" onclick="NumberChange( event, 1 )">+</span>
+    </label>
+}
