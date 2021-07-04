@@ -7,6 +7,7 @@
         justify-content: center;
         box-sizing: border-box;
         width: var( --form-number-width, var( --form-width, 100% ));
+        min-width: var( --form-number-width, var( --form-width, unset ));
         height: var( --form-number-height, var( --form-height, 48px ));
         border: var( --form-number-border-size, var( --form-border-size, 1px )) solid var( --form-number-border-color, var( --form-border-color, #999 ));
         padding: 0 var( --form-number-padding, var( --form-padding, 7px ));

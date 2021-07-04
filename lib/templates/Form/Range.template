@@ -2,7 +2,8 @@
     div.Range
     {
         position:relative;
-        width: 100%;
+        width: var( --form-range-width, var( --form-width, 100% ));
+        min-width: var( --form-range-width, var( --form-width, unset ));
         height: var( --form-range-handle-height, var( --form-range-handle-size, 20px ));
         user-select: none;
         overflow: visible;

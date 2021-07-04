@@ -8,7 +8,8 @@
         box-sizing: border-box;
         border: 1px solid var( --form-button-border-color, var( --form-border-color, #1e87f0 ));
         background: var( --form-button-background, var( --form-highlight-background, #1e87f0 ));
-        width: 100%;
+        width: var( --form-button-width, var( --form-width, 100% ));
+        min-width: var( --form-button-width, var( --form-width, unset ));
         height: var( --form-button-height, var( --form-height, 48px ));
         padding: 0 var( --form-button-padding, var( --form-padding, 7px ));
         font-size: var( --form-button-font-size, var( --form-font-size, 14px ));
