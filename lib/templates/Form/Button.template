@@ -19,6 +19,10 @@
         margin: var( --form-button-margin, var( --form-margin, 8px 0 ));
         cursor: pointer;
         outline: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
         
         &.inline
         {
@@ -29,6 +33,6 @@
 {
     $props.class = ( 'Button ' + ( $props.class || '' )).trim();
 }
-<button {[ id, class, style, type, on*, data-* ]...$props }>
+<button {[ id, class, style, disabled, type, on*, data-* ]...$props }>
     {$content}
 </button>

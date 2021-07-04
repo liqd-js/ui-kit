@@ -3,12 +3,12 @@
     {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         box-sizing: border-box;
         width: var( --form-textarea-width, var( --form-width, 100% ));
-        height: var( --form-textarea-height, 128px );
+        //height: var( --form-textarea-height, 128px );
         border: var( --form-textarea-border-size, var( --form-border-size, 1px )) solid var( --form-textarea-border-color, var( --form-border-color, #999 ));
-        padding: 0 var( --form-textarea-padding, var( --form-padding, 7px ));
+        padding: var( --form-textarea-padding, var( --form-padding, 7px ));
         font-size: var( --form-textarea-font-size, var( --form-font-size, 14px ));
         font-family: var( --form-textarea-font-family, var( --form-font-family, inherit ));
         border-radius: var( --form-textarea-border-radius, var( --form-border-radius, 2px ));
@@ -30,8 +30,9 @@
             font-size: inherit;
             font-family: inherit;
             line-height: 1.4em;
-            height: 1.4em;
+            height: calc( var( --lines ) * 1.4em );
             background: transparent;
+            resize: none;
         }
 
         &[data-label]:before
@@ -59,5 +60,5 @@
     $props.class = ( 'Textarea ' + ( $props.class || '' )).trim();
 }
 <label {[ id, class, style ]...$props } data-label={ $props.label }>
-    <textarea {[ name, placeholder, on*, data-* ]...$props }>{ $props.value }</textarea> // TODO $content
+    <textarea {[ name, placeholder, on*, data-* ]...$props } style={'--lines:' + ( $props.lines || 3 ) + ';'}>{ $props.value }{ $content }</textarea>
 </label>

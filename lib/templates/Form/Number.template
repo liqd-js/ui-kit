@@ -1,20 +1,20 @@
 <style>
-    label.Input
+    label.Number
     {
         position: relative;
         display: flex;
         flex-direction: row;
         justify-content: center;
         box-sizing: border-box;
-        width: var( --form-input-width, var( --form-width, 100% ));
-        height: var( --form-input-height, var( --form-height, 48px ));
-        border: var( --form-input-border-size, var( --form-border-size, 1px )) solid var( --form-input-border-color, var( --form-border-color, #999 ));
-        padding: 0 var( --form-input-padding, var( --form-padding, 7px ));
-        font-size: var( --form-input-font-size, var( --form-font-size, 14px ));
-        font-family: var( --form-input-font-family, var( --form-font-family, inherit ));
-        border-radius: var( --form-input-border-radius, var( --form-border-radius, 2px ));
-        margin: var( --form-input-margin, var( --form-margin, 8px 0 ));
-        background: var( --form-input-background, var( --form-background, white ));
+        width: var( --form-number-width, var( --form-width, 100% ));
+        height: var( --form-number-height, var( --form-height, 48px ));
+        border: var( --form-number-border-size, var( --form-border-size, 1px )) solid var( --form-number-border-color, var( --form-border-color, #999 ));
+        padding: 0 var( --form-number-padding, var( --form-padding, 7px ));
+        font-size: var( --form-number-font-size, var( --form-font-size, 14px ));
+        font-family: var( --form-number-font-family, var( --form-font-family, inherit ));
+        border-radius: var( --form-number-border-radius, var( --form-border-radius, 2px ));
+        margin: var( --form-number-margin, var( --form-margin, 8px 0 ));
+        background: var( --form-number-background, var( --form-background, white ));
         
         &.inline
         {
@@ -24,32 +24,51 @@
         >input
         {
             box-sizing: border-box;
+            text-align: center;
             padding: 0;
             margin: 0;
             outline: none;
             border: none;
             font-size: inherit;
             font-family: inherit;
-            line-height: 1.4em;
-            height: 1.4em;
+            height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
+            line-height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
             background: transparent;
+            //visibility: hidden;
+            opacity: 0;
         }
 
         >span
         {
             position:absolute;
-            user-select: none;
+            top: 0;
+            bottom: 0;
+            width: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
+            height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
+            line-height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
+            text-align: center;
+            font-weight: bold;
+            background: silver;
+            cursor: pointer;
             -moz-user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 30px;
-            background: silver;
-            cursor: pointer;
+            user-select: none;
+            border-width: 0;
+            border-color: var( --form-number-border-color, var( --form-border-color, #999 ));
+            border-style: solid;
 
-            border-right: 1px solid red;
+            &.minus
+            {
+                left: 0;
+                border-right-width: var( --form-number-border-size, var( --form-border-size, 1px ));
+            }
+
+            &.plus
+            {
+                right: 0;
+                border-left-width: var( --form-number-border-size, var( --form-border-size, 1px ));
+            }
         }
 
         &:last-child
@@ -57,40 +76,87 @@
             left:100px;
         }
 
-        &[data-label]:before
-        {
-            content: attr( data-label );
-            pointer-events: none;
-            color: var( --form-input-label-color, var( --form-label-color, #777 ));
-            font-size: var( --form-input-label-font-size, var( --form-label-font-size, 0.75em ));
-            line-height: 1.4em;
-            height: 1.4em;
-        }
-
         &:focus-within
         {
             border-color: var( --form-input-border-color, var( --form-border-color, var( --form-input-border-focus-color, var( --form-border-focus-color, #1e87f0 ))));
-
-            &:before
+            
+            >input
             {
-                color: var( --form-input-label-focus-color, var( --form-label-focus-color, #1e87f0 ));
+                opacity: 1;
+                //visibility: visible;
             }
+
+            &:after
+            {
+                display: none;
+            }
+        }
+
+        &:after
+        {
+            position: absolute;
+            text-align: center;
+            top: 0;
+            left: 0px;
+            right: 0px;
+            height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
+            line-height: calc( var( --form-number-height, var( --form-height, 48px )) - 2 * var( --form-number-border-size, var( --form-border-size, 1px )));
+            content: attr( data-value );
+            pointer-events: none;
         }
     }
 </style>
 {
-    $props.class = ( 'Input ' + ( $props.class || '' )).trim();
+    $props.class = ( 'Number ' + ( $props.class || '' )).trim();
     $props.type = $props.type || 'text';
 }
 <script>
-    function NumberChange( event )
+    function NumberInputFilter( input )
     {
+        if( !input.hasOwnProperty( 'inputFilter' ))
+        {
+            input.inputFilter = { pattern: /^[+-]?\d*[,.]?\d*$/, value: input.value, selection: { start: input.selectionStart, end: input.selectionEnd }};
+
+            for( let event of [ 'input', 'keydown', 'keyup', 'mousedown', 'mouseup', 'select', 'contextmenu', 'drop' ])
+            {
+                input.addEventListener( event, function()
+                {
+                    if( input.inputFilter.pattern.test( input.value ))
+                    {
+                        input.inputFilter.value = input.value;
+                        input.inputFilter.selection.start = input.selectionStart;
+                        input.inputFilter.selection.end = input.selectionEnd;
+                    }
+                    else
+                    {
+                        input.value = input.inputFilter.value;
+                        input.setSelectionRange( input.inputFilter.selection.start, input.inputFilter.selection.end );
+                    }
+                });
+            }
+        }
+    }
+
+    function NumberChange( event, sign )
+    {
+        if( !event.isTrusted ){ return }
+
         event.stopPropagation();
         event.preventDefault();
 
-        input = event.target.parentNode.querySelector('input');
+        var input = event.target.parentNode.querySelector('input'), value = parseFloat( input.value );
 
-        input.value = parseInt( input.value ) + 1;
+        if( typeof sign !== 'undefined' )
+        {
+            value = Math.round(( parseFloat( value ) + sign * parseFloat( input.dataset.step )) * 100000 ) / 100000;
+        }
+
+        input.value = Math.max( input.dataset.hasOwnProperty('min') ? input.dataset.min : -Infinity, Math.min( input.dataset.hasOwnProperty('max') ? input.dataset.max : Infinity, value ));
+
+        if( input.parentNode.dataset.pattern )
+        {
+            input.parentNode.dataset.value = input.parentNode.dataset.pattern.replace(/\{\s*value\s*\}/, input.value );
+        }
 
         function fireEvent( event )
         {
@@ -102,8 +168,8 @@
         fireEvent( 'change' );
     }
 </script>
-<label {[ id, class, style ]...$props } data-label={ $props.label }>
-    <span onclick="NumberChange( event )">-</span>
-    <input {[ type, name, value, placeholder, on*, data-* ]...$props } />
-    <span onclick="NumberChange( event )">+</span>
+<label {[ id, class, style ]...$props } data-label={ $props.label } data-value={'{value} ks'.replace(/\{\s*value\s*\}/, $props.value || $props.min || 1 )} data-pattern="{value} ks">
+    <span class="minus" onclick="NumberChange( event, -1 )">-</span>
+    <input {[ type, name, placeholder, !onchange, on*, data-* ]...$props } value={ $props.value || $props.min || 1 } onfocus="NumberInputFilter(this);" onchange={'if( event.isTrusted ){ NumberChange( event )}else{' + ( $props.onclick || '' ) + '}'} data-min={ $props.min } data-step={ $props.step || 1 } data-max={ $props.max } />
+    <span class="plus" onclick="NumberChange( event, 1 )">+</span>
 </label>

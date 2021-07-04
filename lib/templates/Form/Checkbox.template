@@ -38,6 +38,7 @@
             -moz-appearance: none;
             appearance: none;
             pointer-events: auto;
+            flex: 0 0 var( --form-checkbox-size, var( --form-size, 24px ));
 
             &:checked
             {
@@ -90,9 +91,9 @@
 </style>
 {
     $props.class = ( 'Checkbox ' + ( $props.class || '' )).trim();
-    $props.type = $props.type || 'text';
+    
+    <label {[ id, class, style, disabled ]...$props } data-label={ $props.label }>
+        <input type="checkbox" {[ name, value, checked, required, on*, data-* ]...$props } />
+        {$content}
+    </label>
 }
-<label {[ id, class, style ]...$props } data-label={ $props.label }>
-    <input type="checkbox" {[ name, value, checked, required, on*, data-* ]...$props } />
-    {$content}
-</label>

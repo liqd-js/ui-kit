@@ -1,7 +1,7 @@
 {
   "name": "@liqd-js/ui-kit",
   "description": "UI Kit",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "author": "radixxko",
   "license": "MIT",
   "main": "lib/ui_kit.js",
@@ -21,9 +21,8 @@
     "liqd-js",
     "liqd"
   ],
-  "dependencies": {},
   "devDependencies": {
-    "@liqd-js/server": "0.0.3",
-    "@liqd-js/template": "^0.2.6"
+    "@liqd-js/server": "^0.0.5",
+    "@liqd-js/template": "^0.5.6"
   }
 }

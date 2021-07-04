@@ -1,6 +1,7 @@
 <style>
     label.Select
     {
+        position: relative;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -45,6 +46,34 @@
             height: 1.4em;
         }
 
+        /* WUT
+
+        &:not(.warning):not(.error):not(.success):after
+        {
+             content: "";
+             display: flex;
+             position: absolute;
+             top: 0;
+             right: 0;
+             align-items: center;
+             justify-content: center;
+             -webkit-mask-repeat: no-repeat;
+             -moz-mask-repeat: no-repeat;
+             mask-repeat: no-repeat;
+             -webkit-mask-position: center;
+             -moz-mask-position: center;
+             mask-position: center;
+             width: var( --form-input-height-size, var(--form-height-size, 48px ));
+             height: var( --form-input-height-size, var(--form-height-size, 48px ));
+             -webkit-mask-size: var( --icon-mask-size, 18px 18px);
+             -moz-mask-size: var( --icon-mask-size, 18px 18px);
+             mask-size: var( --icon-mask-size, 18px 18px);
+             -webkit-mask-image: url(https://js.webergency.com/icons/chevron-down.svg);
+             mask-image: url(https://js.webergency.com/icons/chevron-down.svg);
+             background: var( --form-select-border-color, var( --form-border-color, #999 ));
+        }
+        */
+
         &:focus-within
         {
             border-color: var( --form-select-border-color, var( --form-border-color, var( --form-select-border-focus-color, var( --form-border-focus-color, #1e87f0 ))));
@@ -60,7 +89,7 @@
     $props.class = ( 'Select ' + ( $props.class || '' )).trim();
 }
 <label {[ id, class, style ]...$props } data-label={ $props.label }>
-    <select {[ name, placeholder, on*, data-* ]...$props }>
+    <select {[ name, placeholder, required, disabled, autocomplete, on*, data-* ]...$props }>
         {$content}
     </select>
 </label>
