@@ -17,6 +17,11 @@
             display: inline-flex;
         }
 
+        &[disabled]
+        {
+            cursor: default;
+        }
+
         >input
         {
             cursor: pointer;
@@ -38,6 +43,11 @@
             -moz-appearance: none;
             appearance: none;
             pointer-events: auto;
+
+            &[disabled]
+            {
+                cursor: default;
+            }
 
             &:checked
             {

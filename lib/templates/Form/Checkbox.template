@@ -18,6 +18,11 @@
             display: inline-flex;
         }
 
+        &[disabled]
+        {
+            cursor: default;
+        }
+
         >input
         {
             cursor: pointer;
@@ -39,6 +44,11 @@
             appearance: none;
             pointer-events: auto;
             flex: 0 0 var( --form-checkbox-size, var( --form-size, 24px ));
+
+            &[disabled]
+            {
+                cursor: default;
+            }
 
             &:checked
             {
@@ -91,7 +101,7 @@
 </style>
 {
     $props.class = ( 'Checkbox ' + ( $props.class || '' )).trim();
-    
+
     <label {[ id, class, style, disabled ]...$props } data-label={ $props.label }>
         <input type="checkbox" {[ name, value, checked, required, on*, data-* ]...$props } />
         {$content}
