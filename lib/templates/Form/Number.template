@@ -198,8 +198,8 @@
     $props.class = ( 'Number ' + ( $props.class || '' )).trim();
     let limit = $props.hasOwnProperty('min') && ( $props.min == $props.value || !$props.hasOwnProperty('value')) ? 'minimum' : ( $props.hasOwnProperty('max') && ( $props.max == $props.value ) ? 'maximum' : undefined );
 
-    <label {[ id, class, style ]...$props } data-label={ $props.label } data-value={ $props.pattern ? $props.pattern.replace(/\{\s*value\s*\}/, $props.value || $props.min || 1 ) : undefined } data-pattern={ $props.pattern } data-limit={ limit }>
-        <input {[ name, placeholder, !onchange, on*, data-* ]...$props } type="number" value={ $props.value || $props.min || 1 } onfocus="NumberInputFilter(this);" onchange={'if( event.isTrusted ){ NumberChange( event )}else{' + ( $props.onchange || '' ) + '}'} data-min={ $props.min } data-step={ $props.step || 1 } data-max={ $props.max } />
+    <label {[ id, class, disabled, style ]...$props } data-label={ $props.label } data-value={ $props.pattern ? $props.pattern.replace(/\{\s*value\s*\}/, $props.value || $props.min || 1 ) : undefined } data-pattern={ $props.pattern } data-limit={ limit }>
+        <input {[ name, placeholder, disabled, !onchange, on*, data-* ]...$props } type="number" value={ $props.value || $props.min || 1 } onfocus="NumberInputFilter(this);" onchange={'if( event.isTrusted ){ NumberChange( event )}else{' + ( $props.onchange || '' ) + '}'} data-min={ $props.min } data-step={ $props.step || 1 } data-max={ $props.max } />
         <span class="minus" onclick="NumberChange( event, -1 )">-</span>
         <span class="plus" onclick="NumberChange( event, 1 )">+</span>
     </label>

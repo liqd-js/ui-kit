@@ -103,7 +103,7 @@
     $props.class = ( 'Checkbox ' + ( $props.class || '' )).trim();
 
     <label {[ id, class, style, disabled ]...$props } data-label={ $props.label }>
-        <input type="checkbox" {[ name, value, checked, required, on*, data-* ]...$props } />
+        <input type="checkbox" {[ name, value, checked, disabled, required, on*, data-* ]...$props } />
         {$content}
     </label>
 }
