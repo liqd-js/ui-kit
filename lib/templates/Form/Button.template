@@ -34,6 +34,6 @@
 {
     $props.class = ( 'Button ' + ( $props.class || '' )).trim();
 }
-<button {[ id, class, style, disabled, type, on*, data-* ]...$props }>
+<button {[ id, class, style, disabled, type, on*, data-*, aria-* ]...$props }>
     {$content}
 </button>
