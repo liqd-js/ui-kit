@@ -58,7 +58,7 @@
         }
     }
 </style>
-<script>
+<script defer>
     function RangeDrag( handle, event )
     {
         let range = handle.parentNode, touch = ( event.type === 'touchstart' ), eventX = ( touch ? event.touches[0].screenX : event.screenX ), startX = handle.offsetLeft;

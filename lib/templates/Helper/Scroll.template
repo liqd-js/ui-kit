@@ -68,7 +68,7 @@
     }
 }
 </style>
-<script>
+<script defer>
     ( typeof Scroll === 'undefined' ) && ( Scroll =
         {
             update: function( scrollContent )

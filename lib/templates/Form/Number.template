@@ -130,7 +130,7 @@
         }
     }
 </style>
-<script>
+<script defer>
     function NumberInputFilter( input )
     {
         if( !input.hasOwnProperty( 'inputFilter' ))
