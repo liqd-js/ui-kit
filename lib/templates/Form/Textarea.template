@@ -61,5 +61,5 @@
     $props.class = ( 'Textarea ' + ( $props.class || '' )).trim();
 }
 <label {[ id, class, disabled, style ]...$props } data-label={ $props.label }>
-    <textarea {[ name, placeholder, disabled, on*, data-* ]...$props } style={'--lines:' + ( $props.lines || 3 ) + ';'}>{ $props.value }{ $content }</textarea>
+    <textarea {[ name, placeholder, disabled, on*, data-*, aria-* ]...$props } style={'--lines:' + ( $props.lines || 3 ) + ';'}>{ $props.value }{ $content }</textarea>
 </label>
